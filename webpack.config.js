@@ -1,8 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { ModuleFederationPlugin } = require("webpack").container;
 
 module.exports = {
-  entry: "./src/index.tsx",
+  entry: "./src/index.ts",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "bundle.js",
@@ -29,19 +30,45 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({ template: "./public/index.html" })],
+  plugins: [
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new ModuleFederationPlugin({
+      name: "container",
+      filename: "remoteEntry.js",
+      remotes: {
+        header: "header@http://localhost:3001/remoteEntry.js",
+        // footer: "footer@http://localhost:3002/remoteEntry.js",
+      },
+      shared: {
+        react: {
+          singleton: true,
+          requiredVersion: "19.0.0",
+          version: "19.0.0",
+          eager: true,
+          // requiredVersion: "^19.0.0",
+        },
+        "react-dom": {
+          singleton: true,
+          requiredVersion: "19.0.0",
+          version: "19.0.0",
+          eager: true,
+          // requiredVersion: "^19.0.0",
+        },
+      },
+    }),
+  ],
   devServer: {
-    hot: true, // hot reloading
-    port: 3000, // port on which server will run
-    open: true, // open browser automatically on start
-    allowedHosts: ["http://127.0.0.1:3000", "http://localhost:3000"],
-    // proxy: [
-    //   {
-    //     context: ["/"],
-    //     target: "http://127.0.0.1:8005",
-    //     changeOrigin: true,
-    //     secure: false,
-    //   },
-    // ],
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
+    compress: true,
+    port: 3000,
+    historyApiFallback: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "X-Requested-With, content-type, Authorization",
+    },
   },
 };

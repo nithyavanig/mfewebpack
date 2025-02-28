@@ -1,0 +1,28 @@
+.app-prod-overview {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid black;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.host-header,
+.host-footer {
+  width: 100%;
+  height: 20%;
+  border: 1px solid black;
+}
+
+.host-product,
+.host-overview {
+  width: 50%;
+  height: 55%;
+  border: 1px solid black;
+}
